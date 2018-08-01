@@ -1,0 +1,18 @@
+---
+- name: 10forge.docker
+  scm: git
+  src: https://github.com/10forge/ansible-docker
+  version: 0.1.2
+- name: ahuffman.resolv
+  scm: git
+  src: https://github.com/ahuffman/ansible-resolv
+  version: v1.2
+- name: grycap.ntp
+  scm: git
+  src: https://github.com/grycap/ansible-role-ntp
+  version: 35833801363997a517e35edc8d7da3ac7d8f6762
+- name: picotrading.sudo
+  scm: git
+  src: https://github.com/picotrading/ansible-sudo.git
+  version: bb15ae1012a7ea1bc0fdc76a14011f1228ed1b2f
+

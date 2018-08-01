@@ -1,0 +1,61 @@
+---
+- hosts: all
+  name: manage users and groups
+  tasks:
+    - name: merge usergroups
+      merge_vars:
+        expected_type: 'list'
+        merged_var_name: usergroups
+        prefix_to_merge: merge__
+        suffix_to_merge: __usergroups
+
+    - debug:
+        var: usergroups
+        verbosity: 2
+
+    - name: manage usergroups
+      group:
+        name: "{{ item.name }}"
+        gid: "{{ item.gid|default(omit) }}"
+        state: "{{ item.state|default('absent') }}"
+        system: "{{ item.system|default('no') }}"
+      loop: "{{ usergroups|default({}) }}"
+      become: true
+
+    - name: merge users
+      merge_vars:
+        expected_type: 'list'
+        merged_var_name: users
+        prefix_to_merge: merge__
+        suffix_to_merge: __users
+
+    - debug:
+        var: users
+        verbosity: 2
+
+    - name: manage users
+      user:
+        append: yes
+        createhome: "{{ item.createhome|default('yes') }}"
+        comment: "{{ item.fullname | default(omit) }}"
+        groups: "{{ item.groups|default([]) }}"
+        home: "/home/{{ item.name }}"
+        name: "{{ item.name }}"
+        remove: "{{ item.remove|default('yes') }}"
+        shell: "{{ item.shell|default('/bin/bash') }}"
+        state: "{{ item.state|default('absent') }}"
+      loop: "{{ users|default({}) }}"
+      become: true
+
+    - name: manage ssh keys
+      authorized_key:
+        key: "{{ item.1 }}"
+        state: "{{ item.0.state|default('absent') }}"
+        user: "{{ item.0.name }}"
+      with_subelements:
+        - "{{ users|default({}) }}"
+        - ssh_pub_keys
+        - skip_missing: yes
+      when: item.0.state|default('absent') == 'present'
+      become: true
+

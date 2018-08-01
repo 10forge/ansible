@@ -1,0 +1,9 @@
+---
+merge__docker__repos:
+  - name: docker-ce-stable
+    baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
+    description: Docker CE Stable
+    file: docker-ce
+merge__docker__rpm_keys:
+  - key: https://download.docker.com/linux/centos/gpg
+

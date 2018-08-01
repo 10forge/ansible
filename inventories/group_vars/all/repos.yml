@@ -1,0 +1,27 @@
+---
+merge__default__repos:
+  - name: base
+    description: CentOS-$releasever - Base
+    file: CentOS-Base
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+  - name: updates
+    description: CentOS-$releasever - Updates
+    file: CentOS-Updates
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+  - name: extras
+    description: CentOS-$releasever - Extras
+    file: CentOS-Extras
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
+  - name: centosplus
+    description: CentOS-$releasever - Plus
+    file: CentOS-Plus
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus&infra=$infra
+  - name: epel
+    description: Extra Packages for Enterprise Linux {{ ansible_distribution_major_version }}
+    failovermethod: priority
+    file: epel
+    metalink: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+merge__default__rpm_keys:
+  - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-{{ ansible_distribution_major_version }}
+  - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
+

@@ -1,0 +1,11 @@
+---
+- hosts: all
+  name: provision the target with the least necessary setup for a RedHat instance
+- import_playbook: ../bootstrap_remote_redhat.yml
+- import_playbook: ../purge_yum_repositories_and_keys.yml
+- import_playbook: ../setup_yum_repositories_and_keys.yml
+- import_playbook: ../setup_packages.yml
+- import_playbook: ../manage_users_and_groups.yml
+- import_playbook: ../manage_user_permissions.yml
+- import_playbook: ../manage_network_config.yml
+

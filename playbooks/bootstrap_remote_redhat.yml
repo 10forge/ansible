@@ -1,0 +1,28 @@
+---
+- hosts: all
+  gather_facts: no
+  name: bootstrap remote redhat systems
+  tasks:
+    - name: install python
+      raw: 'yum -y install python'
+      register: install
+      changed_when:
+        - not install.stdout is search('Nothing to do')
+        - not install.stdout is search('command not found')
+      become: true
+
+    - name: install epel-release
+      yum:
+        name: epel-release
+        state: present
+      become: true
+
+    - name: install dependencies
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - ca-certificates
+        - python-pip
+      become: true
+

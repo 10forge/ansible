@@ -1,0 +1,40 @@
+---
+- hosts: all
+  name: setup packages
+  tasks:
+    - name: merge packages
+      merge_vars:
+        expected_type: 'list'
+        merged_var_name: remove_packages
+        prefix_to_merge: merge__
+        suffix_to_merge: __remove_packages
+
+    - debug:
+        var: remove_packages
+        verbosity: 2
+
+    - name: remove packages
+      yum:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ remove_packages }}"
+      become: true
+
+    - name: merge installable packages
+      merge_vars:
+        expected_type: 'list'
+        merged_var_name: install_packages
+        prefix_to_merge: merge__
+        suffix_to_merge: __install_packages
+
+    - debug:
+        var: install_packages
+        verbosity: 2
+
+    - name: install packages
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ install_packages }}"
+      become: true
+

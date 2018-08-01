@@ -1,0 +1,54 @@
+---
+- hosts: all
+  name: setup yum repositories and keys
+  vars:
+    repos_config_dir: /etc/yum.repos.d
+
+  tasks:
+    - name: merge rpm keys
+      merge_vars:
+        expected_type: 'list'
+        merged_var_name: rpm_keys
+        prefix_to_merge: merge__
+        suffix_to_merge: __rpm_keys
+
+    - debug:
+        var: rpm_keys
+        verbosity: 2
+
+    - name: setup rpm keys
+      rpm_key:
+        key: "{{ item.key }}"
+        state: present
+        validate_certs: "{{ item.validate_certs|default(true) }}"
+      loop: "{{ rpm_keys|default({}) }}"
+      become: true
+
+    - name: merge repositories
+      merge_vars:
+        expected_type: 'list'
+        merged_var_name: yum_repositories
+        prefix_to_merge: merge__
+        suffix_to_merge: __repos
+
+    - debug:
+        var: yum_repositories
+        verbosity: 2
+
+    - name: setup yum repositories
+      yum_repository:
+        baseurl: "{{ item.baseurl|default(omit) }}"
+        description: "{{ item.description }}"
+        enabled: "{{ item.enabled|default(true) }}"
+        failovermethod: "{{ item.failovermethod|default(omit) }}"
+        file: "{{ item.file|default(omit) }}"
+        gpgcheck: "{{ item.gpgcheck|default(true) }}"
+        metalink: "{{ item.metalink|default(omit) }}"
+        mirrorlist: "{{ item.mirrorlist|default(omit) }}"
+        name: "{{ item.name }}"
+        reposdir: "{{ repos_config_dir }}"
+        skip_if_unavailable: "{{ item.skip_if_unavailable|default(omit) }}"
+        state: present
+      loop: "{{ yum_repositories|default({}) }}"
+      become: true
+

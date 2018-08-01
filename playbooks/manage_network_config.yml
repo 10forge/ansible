@@ -1,0 +1,9 @@
+---
+- hosts: all
+  name: manage network config
+  tasks:
+    - name: import ahuffman.resolv
+      import_role:
+        name: ahuffman.resolv
+      become: true
+

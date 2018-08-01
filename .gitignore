@@ -1,0 +1,6 @@
+*.pyc
+*.retry
+*.swp
+/.vault
+/roles
+

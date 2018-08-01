@@ -1,0 +1,20 @@
+---
+- hosts: all
+  name: manage user permissions
+  tasks:
+    - name: merge sudo users
+      merge_vars:
+        expected_type: 'list'
+        merged_var_name: sudo_users
+        prefix_to_merge: merge__
+        suffix_to_merge: __sudo_users
+
+    - debug:
+        var: sudo_users
+        verbosity: 2
+
+    - name: import picotrading.sudo
+      import_role:
+        name: picotrading.sudo
+      become: true
+

@@ -1,0 +1,58 @@
+---
+- hosts: all
+  name: cleanup yum repositories and keys
+  vars:
+    repos_config_dir: /etc/yum.repos.d
+
+  vars_prompt:
+    - name: cleanup_rpm_keys
+      prompt: Remove all rpm keys?
+      private: false
+      default: 'no'
+
+    - name: cleanup_repos
+      prompt: Remove all yum repositories?
+      private: false
+      default: 'no'
+
+  tasks:
+    - name: get list of rpm keys
+      command: "/usr/bin/rpm -q gpg-pubkey"
+      args:
+        warn: false
+      failed_when: false
+      changed_when: false
+      register: present_rpm_keys
+      become: true
+
+    - debug:
+        var: present_rpm_keys
+        verbosity: 2
+
+    - name: remove rpm keys
+      command: "/usr/bin/rpm -e {{ item }}"
+      args:
+        warn: false
+      loop: "{{ present_rpm_keys.stdout_lines }}"
+      become: true
+      when:
+        - cleanup_rpm_keys != 'no'
+        - not present_rpm_keys.stdout is search('package gpg-pubkey is not installed')
+
+    - name: get list of yum repositories
+      command: "/usr/bin/ls -1 {{ repos_config_dir }}"
+      register: present_yum_repositories
+      become: true
+
+    - debug:
+        var: present_yum_repositories
+        verbosity: 2
+
+    - name: remove yum repositories
+      file:
+        dest: "{{ repos_config_dir }}/{{ item }}"
+        state: absent
+      loop: "{{ present_yum_repositories.stdout_lines }}"
+      become: true
+      when: cleanup_repos != 'no'
+

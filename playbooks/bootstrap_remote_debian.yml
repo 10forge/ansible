@@ -1,0 +1,27 @@
+---
+- hosts: all
+  gather_facts: no
+  name: bootstrap remote debian system
+  tasks:
+    - name: install python
+      raw: 'apt-get -y install python-minimal python-dev'
+      register: install
+      changed_when:
+        - not install.stdout is search('0 upgraded, 0 newly installed')
+        - not install.stdout is search('command not found')
+      become: true
+
+    - name: install apt-transport-https
+      apt:
+        name: apt-transport-https
+        state: present
+      become: true
+
+    - name: install dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - ca-certificates
+        - python-pip
+      become: true

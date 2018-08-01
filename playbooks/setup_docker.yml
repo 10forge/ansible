@@ -1,0 +1,9 @@
+---
+- hosts: all
+  name: setup docker
+  tasks:
+    - name: import 10forge.docker
+      import_role:
+        name: 10forge.docker
+      become: true
+
