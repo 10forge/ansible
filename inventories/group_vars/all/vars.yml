@@ -1,0 +1,87 @@
+---
+
+#--------------------------------------------------------------------------------------------------
+# NETWORK
+#--------------------------------------------------------------------------------------------------
+
+resolv_domain: 10forge.org
+resolv_nameservers:
+  - 1.1.1.1
+  - 8.8.8.8
+  - 1.0.0.1
+resolv_search:
+  - 10forge.org
+
+
+#--------------------------------------------------------------------------------------------------
+# PACKAGES
+#--------------------------------------------------------------------------------------------------
+
+merge__default__install_packages:
+  - bash-completion
+  - curl
+  - git
+  - htop
+  - mosh
+  - screen
+  - sudo
+  - tcpdump
+  - vim
+  - yum-utils
+merge__default__remove_packages:
+  - firewalld
+
+
+#--------------------------------------------------------------------------------------------------
+# PERMISSIONS
+#--------------------------------------------------------------------------------------------------
+
+sudo_defaults:
+  - '!requiretty'
+  - '!visiblepw'
+  - always_set_home
+  - env_reset
+  - env_keep  = "COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS"
+  - env_keep += "MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE"
+  - env_keep += "LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES"
+  - env_keep += "LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE"
+  - env_keep += "LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY"
+  - secure_path = /sbin:/bin:/usr/sbin:/usr/bin
+merge__default__sudo_users:
+  - root:
+      host: ALL
+      runas: ALL
+      tag: ''
+      cmd: ALL
+
+
+#--------------------------------------------------------------------------------------------------
+# REPOSITORIES
+#--------------------------------------------------------------------------------------------------
+
+merge__default__repos:
+  - name: base
+    description: CentOS-$releasever - Base
+    file: CentOS-Base
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+  - name: updates
+    description: CentOS-$releasever - Updates
+    file: CentOS-Updates
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+  - name: extras
+    description: CentOS-$releasever - Extras
+    file: CentOS-Extras
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
+  - name: centosplus
+    description: CentOS-$releasever - Plus
+    file: CentOS-Plus
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus&infra=$infra
+  - name: epel
+    description: Extra Packages for Enterprise Linux {{ ansible_distribution_major_version }}
+    failovermethod: priority
+    file: epel
+    metalink: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+merge__default__rpm_keys:
+  - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-{{ ansible_distribution_major_version }}
+  - key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
+

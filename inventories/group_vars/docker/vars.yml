@@ -1,4 +1,9 @@
 ---
+
+#--------------------------------------------------------------------------------------------------
+# REPOSITORIES
+#--------------------------------------------------------------------------------------------------
+
 merge__docker__repos:
   - name: docker-ce-stable
     baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable

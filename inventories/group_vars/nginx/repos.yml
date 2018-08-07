@@ -1,8 +1,0 @@
----
-merge__webserver__repos:
-  - name: nginx
-    baseurl: http://nginx.org/packages/centos/$releasever/$basearch/
-    description: Official Nginx Repository
-    file: nginx
-    gpgcheck: false
-
